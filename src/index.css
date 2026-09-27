@@ -1,0 +1,168 @@
+@import "./app/styles/reset.css";
+
+:root {
+  --background-primary: light-dark(#fff, #17181c);
+  --background-secondary: light-dark(#f5f7fa, #25262d);
+  --background-tertiary: light-dark(#0909090d, #ffffff17);
+  /* Text */
+  --text-primary: light-dark(#060708, #fff);
+  --text-tertiary: light-dark(#06070885, #ffffffa3);
+  --text-primary-inverse-static: #fff;
+  --text-themed: #007aff;
+
+  --counter-contrast: #fff;
+
+  --states-text-primary-inverse-static-disabled: light-dark(
+    #ffffffb8,
+    #ffffff47
+  );
+
+  /* button */
+  --button-primary: #007aff;
+  --states-button-primary-hover: #479fff;
+  --states-button-primary-pressed: #006ee5;
+  --states-button-primary-disabled: light-dark(#007aff7a, #ffffff1f);
+
+  /* bubbles */
+  --bubbles-system-step-1: light-dark(#ffffffa3, #373a4ea3);
+  --bubbles-system-step-2: light-dark(#ffffffe0, #373a4ee0);
+  --bubbles-system-step-3: light-dark(#ffffffe0, #373a4ee0);
+
+  /* spacing */
+  --spacing-s-half: 6px;
+  --spacing-m: 12px;
+  --spacing-1: 0.25rem;
+
+  /* radius */
+  --rounded-sm: 1rem;
+  --rounded-xl: 1.25rem;
+  --rounded-2xl: 1.75rem;
+
+  /* shadows */
+  --shadow-100: 0 4px 24px #00000014;
+
+  /* fonts */
+  --font-action-large-weight: 500;
+  --font-action-large-size: 1.0625rem;
+  --font-action-large-line-height: 1.25rem;
+  --font-action-large-letter-spacing: 0.15px;
+  --font:
+    -apple-system, BlinkMacSystemFont, "Roboto", system-ui, Avenir, Helvetica,
+    Arial, sans-serif;
+
+  --font-subheader-size: 1.25rem;
+  --font-subheader-weight: 600;
+  --font-subheader-line-height: 1.5rem;
+  --font-subheader-letter-spacing: 0;
+
+  --font-description-size: 0.8125rem;
+  --font-description-weight: 400;
+  --font-description-line-height: 1rem;
+  --font-description-letter-spacing: 0.2px;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100dvw;
+  max-height: 100dvh;
+
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  color-scheme: light dark;
+  text-rendering: optimizelegibility;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  height: 100dvh;
+}
+
+@layer reset, components, utilities;
+
+@layer components {
+  @layer typography;
+
+  .button {
+    --button-text-color: var(--text-primary-inverse-static);
+    --button-text-color-disabled: var(
+      --states-text-primary-inverse-static-disabled
+    );
+    --button-background-color: var(--button-primary);
+    --button-background-color-hovered: var(--states-button-primary-hover);
+    --button-background-color-pressed: var(--states-button-primary-pressed);
+    --button-background-color-disabled: var(--states-button-primary-disabled);
+    --counter-color: var(--text-themed);
+    --counter-background: var(--counter-contrast);
+
+    cursor: pointer;
+    color: var(--button-text-color);
+    background: var(--button-background-color);
+    border-radius: var(--button-border-radius, var(--rounded-xl));
+    font: var(--font-action-large-weight) var(--font-action-large-size) /
+      var(--font-action-large-line-height) var(--font);
+    letter-spacing: var(--font-action-large-letter-spacing);
+    border: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    display: flex;
+    position: relative;
+    transition: background-color 150ms;
+
+    &.button--large {
+      padding: calc(var(--spacing-1) * 4.5) calc(var(--spacing-1) * 5.5);
+    }
+
+    &:hover {
+      background-color: var(--button-background-color-hovered);
+    }
+
+    &:active {
+      background-color: var(--button-background-color-pressed);
+    }
+
+    &:disabled {
+      background-color: var(--button-background-color-disabled);
+    }
+  }
+
+  @layer typography {
+    .subheader {
+      font-size: var(--font-subheader-size);
+      font-weight: var(--font-subheader-weight);
+      line-height: var(--font-subheader-line-height);
+      letter-spacing: var(--font-subheader-letter-spacing);
+    }
+
+    .description {
+      font-size: var(--font-description-size);
+      font-weight: var(--font-description-weight);
+      line-height: var(--font-description-line-height);
+      letter-spacing: var(--font-description-letter-spacing);
+    }
+  }
+}
+
+@layer utilities {
+  .bg-gradient-base {
+    background: linear-gradient(
+      180deg,
+      var(--bubbles-system-step-1),
+      var(--bubbles-system-step-2)
+    );
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .text-tertiary {
+    color: var(--text-tertiary);
+  }
+}

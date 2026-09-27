@@ -6,11 +6,20 @@ const BASE_URL = import.meta.env.VITE_GREEN_API_BASE;
 export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {},
+  replaceState: Partial<
+    Pick<
+      ReturnType<typeof useInstanceStore.getState>,
+      "idInstance" | "apiTokenInstance"
+    >
+  > = {},
 ): Promise<T> {
   if (!BASE_URL) {
     throw new Error("Environment variable VITE_GREEN_API_BASE is not defined");
   }
-  const { idInstance, apiTokenInstance } = useInstanceStore.getState();
+  const {
+    idInstance = replaceState?.idInstance,
+    apiTokenInstance = replaceState?.apiTokenInstance,
+  } = useInstanceStore.getState();
 
   if (!idInstance || !apiTokenInstance) {
     throw new Error("Not authenticated: missing Green-API credentials");

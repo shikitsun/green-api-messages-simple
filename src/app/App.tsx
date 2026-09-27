@@ -1,5 +1,5 @@
 import "./styles/App.css";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router";
 import { useInstanceStore } from "../entities/instance/model/useInstanceStore.js";
 import { lazy } from "react";
 
