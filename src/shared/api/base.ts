@@ -1,4 +1,5 @@
-import { useInstanceStore } from "../../entities/instance/model/useInstanceStore.js";
+// Absolute necessary
+import { useInstanceStore } from "@/entities/instance";
 
 const BASE_URL = import.meta.env.VITE_GREEN_API_BASE;
 
@@ -20,12 +21,9 @@ export async function apiRequest<T>(
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
 
-  // Note: For GREEN-API, many methods use idInstance and apiToken in URL or query params,
-  // but we'll follow the standard pattern for now.
-  // Adjust based on actual GREEN-API documentation requirements if needed.
   const finalUrl = url
-    .replace("{idInstance}", idInstance)
-    .replace("{apiTokenInstance}", apiTokenInstance);
+    .replace("{{idInstance}}", idInstance)
+    .replace("{{apiTokenInstance}}", apiTokenInstance);
 
   const response = await fetch(finalUrl, {
     ...options,
