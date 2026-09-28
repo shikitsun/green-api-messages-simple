@@ -1,4 +1,4 @@
-import type { IChat } from "../message";
+import type { IChat } from "../../message";
 import styles from "./ChatAvatar.module.css";
 
 // Because via API by default we get only name

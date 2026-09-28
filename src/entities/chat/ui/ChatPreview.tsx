@@ -1,4 +1,4 @@
-import type { IChat } from "../message";
+import type { IChat } from "../../message";
 import { ChatAvatar } from "./ChatAvatar";
 import styles from "./ChatPreview.module.css";
 

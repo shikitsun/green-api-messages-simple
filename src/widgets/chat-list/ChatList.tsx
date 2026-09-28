@@ -1,7 +1,7 @@
 import { getChats } from "@/entities/message";
 import { useQuery } from "@tanstack/react-query";
 import styles from "./ChatList.module.css";
-import { ChatPreview } from "@/entities/chat/ChatPreview";
+import { ChatPreview } from "@/entities/chat";
 
 export default function ChatList() {
   const chats = useQuery({
