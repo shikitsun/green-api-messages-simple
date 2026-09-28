@@ -56,42 +56,44 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
   }
 
   return (
-    <form action={dispatch} className={styles.form}>
-      <h3 className="subheader text-center">Simple Green API Chat</h3>
+    <div className={styles["form-container"]}>
+      <form action={dispatch} className={styles.form}>
+        <h3 className="subheader text-center">Simple Green API Chat</h3>
 
-      <input
-        type="text"
-        name="idInstance"
-        placeholder="idInstance"
-        disabled={isPending}
-        required
-      />
-      <input
-        type="text"
-        name="apiTokenInstance"
-        placeholder="apiTokenInstance"
-        disabled={isPending}
-        required
-      />
+        <input
+          type="text"
+          name="idInstance"
+          placeholder="idInstance"
+          disabled={isPending}
+          required
+        />
+        <input
+          type="text"
+          name="apiTokenInstance"
+          placeholder="apiTokenInstance"
+          disabled={isPending}
+          required
+        />
 
-      {error && <p className="error">{error}</p>}
-      <p className="description text-tertiary text-center">
-        For more info check{" "}
-        <a
-          href="https://green-api.com/v3/docs/before-start/"
-          target="_blank"
-          rel="noopener noreferrer"
+        {error && <p className="error">{error}</p>}
+        <p className="description text-tertiary text-center">
+          For more info check{" "}
+          <a
+            href="https://green-api.com/v3/docs/before-start/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Green API Docs
+          </a>
+        </p>
+        <button
+          type="submit"
+          className="button button--large"
+          disabled={isPending}
         >
-          Green API Docs
-        </a>
-      </p>
-      <button
-        type="submit"
-        className="button button--large"
-        disabled={isPending}
-      >
-        {isPending ? "Verifying..." : "Continue"}
-      </button>
-    </form>
+          {isPending ? "Verifying..." : "Continue"}
+        </button>
+      </form>
+    </div>
   );
 }
