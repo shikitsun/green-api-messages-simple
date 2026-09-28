@@ -1,0 +1,20 @@
+.message {
+  display: flex;
+  padding: calc(var(--spacing-1) * 2) calc(var(--spacing-1) * 4);
+  border-radius: var(--rounded-sm);
+
+  width: min-content;
+  max-width: 50vw;
+  background-color: var(--background-tertiary);
+
+  gap: calc(var(--spacing-1) * 1.75);
+
+  &[data-is-outgoing] {
+    align-self: flex-end;
+  }
+
+  & time {
+    align-self: flex-end;
+    translate: 8px;
+  }
+}

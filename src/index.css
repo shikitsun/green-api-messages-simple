@@ -74,6 +74,10 @@
   --font-description-weight: 400;
   --font-description-line-height: 1rem;
   --font-description-letter-spacing: 0.2px;
+
+  --font-bubble-tag-size: 0.6875rem;
+  --font-bubble-tag-line-height: 0.875rem;
+  --font-bubble-tag-letter-spacing: 0.3px;
 }
 
 body {
@@ -212,6 +216,12 @@ body {
       font-weight: var(--font-description-weight);
       line-height: var(--font-description-line-height);
       letter-spacing: var(--font-description-letter-spacing);
+    }
+
+    .bubble-tag {
+      font: 400 var(--font-bubble-tag-size) / var(--font-bubble-tag-line-height)
+        var(--font);
+      letter-spacing: var(--font-bubble-tag-letter-spacing);
     }
   }
 }
