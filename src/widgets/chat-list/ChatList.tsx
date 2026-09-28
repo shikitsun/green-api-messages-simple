@@ -1,12 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import styles from "./ChatList.module.css";
-import { ChatPreview, getChats } from "@/entities/chat";
+import { ChatPreview, useChats } from "@/entities/chat";
 
 export default function ChatList() {
-  const chats = useQuery({
-    queryKey: ["api", "chats"],
-    queryFn: getChats,
-  });
+  const chats = useChats();
 
   return (
     <aside className={styles.container}>
@@ -15,7 +11,7 @@ export default function ChatList() {
       </header>
 
       <div>
-        {chats.data?.map((chat) => (
+        {chats.map((chat) => (
           <ChatPreview
             key={chat.chatId}
             chatId={chat.chatId}
