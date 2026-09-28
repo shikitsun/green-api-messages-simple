@@ -31,7 +31,10 @@ export async function apiRequest<T>(
     throw new Error("Not authenticated: missing Green-API credentials");
   }
 
-  const url = `${BASE_URL}/waInstance${idInstance}/${endpoint}/${apiTokenInstance}`;
+  // if endpoint have multiple sections, split it by it to extract main part and query
+  const [mainEndpoint, ...rest] = endpoint.split("/");
+
+  const url = `${BASE_URL}/waInstance${idInstance}/${mainEndpoint}/${apiTokenInstance}${rest ? "/" + rest.join("/") : ""}`;
 
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
