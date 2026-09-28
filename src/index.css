@@ -23,6 +23,10 @@
   --states-button-primary-hover: #479fff;
   --states-button-primary-pressed: #006ee5;
   --states-button-primary-disabled: light-dark(#007aff7a, #ffffff1f);
+  --states-button-ghost-hover: light-dark(#0d0d0d0a, #e7e7e70a);
+  --states-button-ghost-pressed: light-dark(#0d0d0d14, #e7e7e714);
+  --states-button-ghost-disabled: light-dark(#fa00ff00, #fa00ff00);
+
   --states-background-card-pressed: light-dark(#fafafa, #1f2026);
   --states-background-card-hover: light-dark(#f6f6f6, #32343d);
   --states-background-card-selected: light-dark(#007aff14, #2c2d37);
@@ -148,6 +152,13 @@ body {
       min-width: 2rem;
     }
 
+    &.button--ghost {
+      --button-background-color: transparent;
+      --button-background-color-hovered: var(--states-button-ghost-hover);
+      --button-background-color-pressed: var(--states-button-ghost-pressed);
+      --button-background-color-disabled: var(--states-button);
+    }
+
     &:hover {
       --button-background-color: var(--button-background-color-hovered);
     }
@@ -230,5 +241,15 @@ body {
   .h-6,
   .size-6 {
     height: calc(var(--spacing-1) * 6);
+  }
+
+  .w-4,
+  .size-4 {
+    width: calc(var(--spacing-1) * 4);
+  }
+
+  .h-4,
+  .size-4 {
+    height: calc(var(--spacing-1) * 4);
   }
 }

@@ -5,3 +5,5 @@ export { transformMessage } from "./api/transformMessage";
 // model
 export { type INotificationResponse } from "./model/notification";
 export { useChatStore, type IMessage } from "./model/useMessagesStore";
+// ui
+export { MessageItem } from "./ui/MessageItem";

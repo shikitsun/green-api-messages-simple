@@ -1,0 +1,41 @@
+import { type ComponentProps } from "react";
+import styles from "./SendMessage.module.css";
+import { ButtonIcon } from "@/shared/ui/Button";
+
+interface ISendMessageProps {
+  target: string;
+  action: ComponentProps<"form">["action"];
+}
+
+export function SendMessage({ target, action }: ISendMessageProps) {
+  return (
+    <form className={styles.container} action={action}>
+      <input type="hidden" name="id" value={target} />
+      {/* In UI source prototype were used contenteditable, leave input there */}
+      <input
+        type="text"
+        name="text"
+        placeholder="Message..."
+        required
+        maxLength={4000}
+      />
+
+      <ButtonIcon type="submit" className="button--ghost">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-4"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+          />
+        </svg>
+      </ButtonIcon>
+    </form>
+  );
+}

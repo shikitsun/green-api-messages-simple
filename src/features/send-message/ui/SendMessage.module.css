@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: var(--background-primary);
+  padding: calc(var(--spacing-1) * 2) calc(var(--spacing-1) * 4);
+  border-radius: var(--rounded-l);
+
+  & input {
+    width: 100%;
+    background-color: transparent;
+  }
+}

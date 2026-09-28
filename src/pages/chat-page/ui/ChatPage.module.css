@@ -1,0 +1,8 @@
+.container {
+  display: grid;
+  grid-template-columns: min(100dvw, 20rem) 1fr;
+
+  @media screen and (max-width: 48rem) {
+    /* adaptive styles */
+  }
+}

@@ -8,5 +8,6 @@ export interface IDeleteNotificationResponse {
 export async function deleteNotification(receiptId: number) {
   return apiRequest<IDeleteNotificationResponse>(
     `deleteNotification/${receiptId}`,
+    { method: "DELETE" },
   );
 }
