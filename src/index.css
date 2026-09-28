@@ -9,6 +9,7 @@
   --text-tertiary: light-dark(#06070885, #ffffffa3);
   --text-primary-inverse-static: #fff;
   --text-themed: #007aff;
+  --text-negative: light-dark(#ff303c, #ce4257);
 
   --counter-contrast: #fff;
 
@@ -38,8 +39,10 @@
 
   /* radius */
   --rounded-sm: 1rem;
+  --rounded-l: 1rem;
   --rounded-xl: 1.25rem;
-  --rounded-2xl: 1.75rem;
+  --rounded-sxl: 1.75rem;
+  --rounded-xl: 2rem;
 
   /* shadows */
   --shadow-100: 0 4px 24px #00000014;
@@ -162,6 +165,14 @@ body {
     z-index: -1;
     position: absolute;
     inset: 0;
+  }
+
+  .error-message {
+    color: var(--text-negative);
+    font-size: var(--font-description-size);
+    font-weight: var(--font-description-weight);
+    line-height: var(--font-description-line-height);
+    letter-spacing: var(--font-description-letter-spacing);
   }
 
   @layer typography {

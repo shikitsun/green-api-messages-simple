@@ -6,6 +6,7 @@ export { checkAccount, type ICheckAccountResponse } from "./api/checkAccount";
 
 export { type IChat } from "./model/chat";
 export { useChats } from "./model/useChats";
+export { useActiveChatStore } from "./model/useActiveChat";
 
 // ui
 export { ChatPreview, type IChatPreviewProps } from "./ui/ChatPreview";
