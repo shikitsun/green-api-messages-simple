@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-primary);
+  width: min(100dvw, 20rem);
+  height: 100dvh;
+  overflow-y: auto;
+
+  gap: calc(var(--spacing-1) * 2);
+
+  & > header {
+    padding: calc(var(--spacing-1) * 4);
+  }
+}

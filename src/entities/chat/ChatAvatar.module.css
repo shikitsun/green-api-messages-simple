@@ -1,0 +1,13 @@
+.text-avatar {
+  --avatar-size: 4rem;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--text-themed);
+  color: var(--text-primary-inverse-static);
+  font-weight: 500;
+  font-size: 1.25rem;
+}

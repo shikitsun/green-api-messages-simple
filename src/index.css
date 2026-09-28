@@ -22,6 +22,9 @@
   --states-button-primary-hover: #479fff;
   --states-button-primary-pressed: #006ee5;
   --states-button-primary-disabled: light-dark(#007aff7a, #ffffff1f);
+  --states-background-card-pressed: light-dark(#fafafa, #1f2026);
+  --states-background-card-hover: light-dark(#f6f6f6, #32343d);
+  --states-background-card-selected: light-dark(#007aff14, #2c2d37);
 
   /* bubbles */
   --bubbles-system-step-1: light-dark(#ffffffa3, #373a4ea3);
@@ -49,6 +52,10 @@
   --font:
     -apple-system, BlinkMacSystemFont, "Roboto", system-ui, Avenir, Helvetica,
     Arial, sans-serif;
+
+  --font-header-size: 1.5rem;
+  --font-header-line-height: 1.75rem;
+  --font-header-letter-spacing: 0;
 
   --font-subheader-size: 1.25rem;
   --font-subheader-weight: 600;
@@ -130,6 +137,12 @@ body {
   }
 
   @layer typography {
+    .title {
+      font: 600 var(--font-header-size) / var(--font-header-line-height)
+        var(--font);
+      letter-spacing: var(--font-header-letter-spacing);
+    }
+
     .subheader {
       font-size: var(--font-subheader-size);
       font-weight: var(--font-subheader-weight);
