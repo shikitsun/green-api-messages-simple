@@ -1,8 +1,8 @@
-import { http, HttpResponse } from "msw";
 import { getStateInstance } from "./instance";
+import { chatHandlers } from "./chat";
 
 export interface IBaseCredentials {
   apiTokenInstance: string;
 }
 
-export const handlers = [getStateInstance];
+export const handlers = [getStateInstance, ...chatHandlers];
