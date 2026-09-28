@@ -17,13 +17,4 @@
 
   padding: calc(var(--spacing-1) * 8);
   border-radius: var(--rounded-2xl);
-
-  & input {
-    padding: var(--spacing-s-half) var(--spacing-m);
-    border-radius: var(--rounded-sm);
-    color: var(--text-primary);
-    background-color: var(--background-tertiary);
-    border: none;
-    height: 3.25rem;
-  }
 }

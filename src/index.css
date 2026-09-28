@@ -54,6 +54,7 @@
     Arial, sans-serif;
 
   --font-header-size: 1.5rem;
+  --font-header-weight: 600;
   --font-header-line-height: 1.75rem;
   --font-header-letter-spacing: 0;
 
@@ -86,7 +87,18 @@ body {
   height: 100dvh;
 }
 
-@layer reset, components, utilities;
+@layer reset, base, components, utilities;
+
+@layer base {
+  input {
+    padding: var(--spacing-s-half) var(--spacing-m);
+    border-radius: var(--rounded-sm);
+    color: var(--text-primary);
+    background-color: var(--background-tertiary);
+    border: none;
+    height: 3.25rem;
+  }
+}
 
 @layer components {
   @layer typography;
@@ -140,6 +152,13 @@ body {
     .title {
       font: 600 var(--font-header-size) / var(--font-header-line-height)
         var(--font);
+      letter-spacing: var(--font-header-letter-spacing);
+    }
+
+    .header {
+      font-size: var(--font-header-size);
+      font-weight: var(--font-header-weight);
+      line-height: var(--font-header-line-height);
       letter-spacing: var(--font-header-letter-spacing);
     }
 
