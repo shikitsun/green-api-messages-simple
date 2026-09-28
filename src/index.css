@@ -115,6 +115,7 @@ body {
     --counter-color: var(--text-themed);
     --counter-background: var(--counter-contrast);
 
+    position: relative;
     cursor: pointer;
     color: var(--button-text-color);
     background: var(--button-background-color);
@@ -130,22 +131,37 @@ body {
     display: flex;
     position: relative;
     transition: background-color 150ms;
+    isolation: isolate;
 
     &.button--large {
       padding: calc(var(--spacing-1) * 4.5) calc(var(--spacing-1) * 5.5);
     }
 
+    &.button--xsmall {
+      background: 0 0;
+      --button-border-radius: calc(var(--spacing-1) * 4.5);
+      width: 2rem;
+      height: 2rem;
+      min-width: 2rem;
+    }
+
     &:hover {
-      background-color: var(--button-background-color-hovered);
+      --button-background-color: var(--button-background-color-hovered);
     }
 
     &:active {
-      background-color: var(--button-background-color-pressed);
+      --button-background-color: var(--button-background-color-pressed);
     }
 
     &:disabled {
-      background-color: var(--button-background-color-disabled);
+      --button-background-color: var(--button-background-color-disabled);
     }
+  }
+
+  .shape {
+    z-index: -1;
+    position: absolute;
+    inset: 0;
   }
 
   @layer typography {
@@ -193,5 +209,15 @@ body {
 
   .text-tertiary {
     color: var(--text-tertiary);
+  }
+
+  .w-6,
+  .size-6 {
+    width: calc(var(--spacing-1) * 6);
+  }
+
+  .h-6,
+  .size-6 {
+    height: calc(var(--spacing-1) * 6);
   }
 }
