@@ -6,7 +6,7 @@ import { AppProviders } from "./app/providers";
 import { BrowserRouter } from "react-router";
 
 async function enableMocking() {
-  if (import.meta.env.NODE_ENV !== "development") {
+  if (import.meta.env.MODE !== "development") {
     return;
   }
 

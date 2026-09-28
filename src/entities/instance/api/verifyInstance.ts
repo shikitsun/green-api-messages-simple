@@ -9,7 +9,7 @@ export async function verifyInstanceConnection(
   >,
 ) {
   return await apiRequest<{ stateInstance: TInstanceState }>(
-    "/waInstance{{idInstance}}/getStateInstance/{{apiTokenInstance}}",
+    "getStateInstance",
     {},
     credentials,
   );

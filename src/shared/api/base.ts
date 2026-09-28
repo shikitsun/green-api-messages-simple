@@ -16,25 +16,27 @@ export async function apiRequest<T>(
   if (!BASE_URL) {
     throw new Error("Environment variable VITE_GREEN_API_BASE is not defined");
   }
-  const {
-    idInstance = replaceState?.idInstance,
-    apiTokenInstance = replaceState?.apiTokenInstance,
-  } = useInstanceStore.getState();
+  const { idInstance: sourceId, apiTokenInstance: sourceApi } =
+    useInstanceStore.getState();
+
+  let idInstance = sourceId;
+  let apiTokenInstance = sourceApi;
+
+  if (replaceState) {
+    idInstance = replaceState.idInstance ?? idInstance;
+    apiTokenInstance = replaceState.apiTokenInstance ?? apiTokenInstance;
+  }
 
   if (!idInstance || !apiTokenInstance) {
     throw new Error("Not authenticated: missing Green-API credentials");
   }
 
-  const url = `${BASE_URL}/${endpoint}`;
+  const url = `${BASE_URL}/waInstance${idInstance}/${endpoint}/${apiTokenInstance}`;
 
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
 
-  const finalUrl = url
-    .replace("{{idInstance}}", idInstance)
-    .replace("{{apiTokenInstance}}", apiTokenInstance);
-
-  const response = await fetch(finalUrl, {
+  const response = await fetch(url, {
     ...options,
     headers,
   });

@@ -12,7 +12,7 @@ function App() {
   return (
     <Routes>
       <Route
-        path="/"
+        index
         element={
           idInstance ? (
             <Navigate to="/chat" replace />
