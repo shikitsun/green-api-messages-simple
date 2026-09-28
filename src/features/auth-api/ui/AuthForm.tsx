@@ -3,59 +3,54 @@ import styles from "./AuthForm.module.css";
 import { useInstanceStore } from "../../../entities/instance/model/useInstanceStore.js";
 import { verifyInstanceConnection } from "../../../entities/instance/api/verifyInstance.js";
 import type { TInstanceState } from "@/entities/instance/model/model.js";
+import { Navigate } from "react-router";
 
 interface AuthFormProps {
   onSuccess?: () => void;
 }
 
-type AuthActionState =
-  | {
-      state: Extract<TInstanceState, "authorized">;
-      idInstance: string;
-      apiTokenInstance: string;
-    }
-  | {
-      state: Exclude<TInstanceState, "authorized">;
-    }
-  | null;
-
-async function authAction(
-  _: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const idInstance = formData.get("idInstance") as string;
-  const apiTokenInstance = formData.get("apiTokenInstance") as string;
-
-  if (!idInstance || !apiTokenInstance) {
-    return {
-      state: "notAuthorized",
-    };
-  }
-
-  try {
-    return {
-      state: (await verifyInstanceConnection({ idInstance, apiTokenInstance }))
-        ?.stateInstance,
-      idInstance,
-      apiTokenInstance,
-    };
-  } catch {}
-
-  return null;
-}
+type AuthActionState = {
+  state: TInstanceState;
+} | null;
 
 export function AuthForm({ onSuccess }: AuthFormProps) {
   const [error, setError] = useState<TInstanceState | null>(null);
   const saveCredentials = useInstanceStore((state) => state.setCredentials);
+
+  async function authAction(
+    _: AuthActionState,
+    formData: FormData,
+  ): Promise<AuthActionState> {
+    const idInstance = formData.get("idInstance") as string;
+    const apiTokenInstance = formData.get("apiTokenInstance") as string;
+
+    if (!idInstance || !apiTokenInstance) {
+      return {
+        state: "notAuthorized",
+      };
+    }
+
+    try {
+      const result = {
+        state: (
+          await verifyInstanceConnection({ idInstance, apiTokenInstance })
+        )?.stateInstance,
+      };
+      saveCredentials({
+        idInstance: idInstance,
+        apiTokenInstance: apiTokenInstance,
+      });
+      onSuccess?.();
+      return result;
+    } catch {}
+
+    return null;
+  }
+
   const [message, dispatch, isPending] = useActionState(authAction, null);
 
   if (message?.state === "authorized") {
-    saveCredentials({
-      idInstance: message.idInstance,
-      apiTokenInstance: message.apiTokenInstance,
-    });
-    onSuccess?.();
-    return null;
+    return <Navigate to="/chat" replace />;
   } else if (message?.state && message?.state !== error) {
     setError(message?.state ?? null);
   }
@@ -66,7 +61,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
 
       <input
         type="text"
-        name="id"
+        name="idInstance"
         placeholder="idInstance"
         disabled={isPending}
         required
