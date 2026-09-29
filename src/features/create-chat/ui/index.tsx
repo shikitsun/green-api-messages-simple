@@ -19,15 +19,16 @@ export function CreateChatModal({ onClose, onSuccess }: ICreateChatModalProps) {
       const value = parseInt(form.get("phoneNumber") as string);
       if (Number.isNaN(value)) return "Invalid number";
       const result = await createChat(value);
-      if (result.error) {
+      if ("error" in result) {
         return result.error;
       }
 
-      if (chats.findIndex((c) => c.chatId === result.payload) === -1) {
-        add(result.payload!);
+      const chatId = result.payload;
+      if (chats.data.findIndex((c) => c.chatId === chatId) === -1) {
+        add(chatId);
       }
 
-      onSuccess(result.payload!);
+      onSuccess(chatId);
 
       return "";
     },
