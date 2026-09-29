@@ -34,7 +34,9 @@ export async function apiRequest<T>(
   // if endpoint have multiple sections, split it by it to extract main part and query
   const [mainEndpoint, ...rest] = endpoint.split("/");
 
-  const url = `${BASE_URL}/waInstance${idInstance}/${mainEndpoint}/${apiTokenInstance}${rest ? "/" + rest.join("/") : ""}`;
+  const url = `${BASE_URL}/waInstance${idInstance}/${mainEndpoint}/${apiTokenInstance}${
+    rest.length ? "/" + rest.join("/") : ""
+  }`;
 
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
@@ -43,6 +45,11 @@ export async function apiRequest<T>(
     ...options,
     headers,
   });
+
+  // receiveNotification answers 204 when there is nothing in the queue
+  if (response.status === 204) {
+    return undefined as T;
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
