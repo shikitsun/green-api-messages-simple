@@ -2,7 +2,8 @@ import { useMessagesListener } from "@/features/receive-messages/useMessagesList
 import ChatList from "@/widgets/chat-list/ChatList";
 import styles from "./ChatPage.module.css";
 import { useActiveChatStore } from "@/entities/chat";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
+import { LoadSpinIcon } from "@/shared/ui/LoadSpin";
 
 const ChatWindow = lazy(() => import("@/widgets/chat-window/ChatWindow"));
 
@@ -14,7 +15,25 @@ export default function Page() {
     <div className={styles.container}>
       <ChatList />
 
-      {active && <ChatWindow id={active} />}
+      {active && (
+        <Suspense
+          fallback={
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <LoadSpinIcon />
+            </div>
+          }
+        >
+          <ChatWindow id={active} />
+        </Suspense>
+      )}
     </div>
   );
 }
