@@ -121,9 +121,7 @@ describe("apiRequest", () => {
     );
 
     await expect(apiRequest("getChats")).rejects.toBeInstanceOf(ApiError);
-    await expect(apiRequest("getChats")).rejects.toThrow(
-      /Cannot reach Green API/,
-    );
+    await expect(apiRequest("getChats")).rejects.toThrow(/Cannot reach API/);
   });
 
   it("carries the status of a failed request", async () => {
