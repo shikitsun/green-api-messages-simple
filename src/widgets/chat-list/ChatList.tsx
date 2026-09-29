@@ -1,11 +1,16 @@
 import { useState } from "react";
 import styles from "./ChatList.module.css";
-import { ChatPreview, useActiveChatStore, useChats } from "@/entities/chat";
+import {
+  ChatPreview,
+  ChatPreviewSkeleton,
+  useActiveChatStore,
+  useChats,
+} from "@/entities/chat";
 import { ButtonIcon } from "@/shared/ui/Button";
 import { CreateChatModal } from "@/features/create-chat";
 
 export default function ChatList() {
-  const chats = useChats();
+  const { data: chats, isLoading } = useChats();
   const [creatingChat, setCreatingChat] = useState(false);
   const { active, set } = useActiveChatStore();
 
@@ -42,6 +47,17 @@ export default function ChatList() {
       )}
 
       <div>
+        {isLoading && (
+          <>
+            <ChatPreviewSkeleton />
+            <ChatPreviewSkeleton />
+            <ChatPreviewSkeleton />
+            <ChatPreviewSkeleton />
+            <ChatPreviewSkeleton />
+            <ChatPreviewSkeleton />
+          </>
+        )}
+
         {chats.map((chat) => (
           <ChatPreview
             key={chat.chatId}

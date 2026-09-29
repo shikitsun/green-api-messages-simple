@@ -1,5 +1,10 @@
+:root {
+  --animation-spin: spin 1000ms linear infinite both;
+  --animation-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 .spin {
-  animation: spin 1000ms linear infinite both;
+  animation: var(--animation-spin);
 }
 
 @keyframes spin {
@@ -9,5 +14,11 @@
 
   to {
     rotate: 180deg;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
   }
 }

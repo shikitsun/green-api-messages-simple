@@ -29,3 +29,13 @@ export function ChatPreview({
     </button>
   );
 }
+
+export function ChatPreviewSkeleton() {
+  return (
+    <button className={styles.skeleton}>
+      <span className={styles["skeleton-avatar"]}></span>
+      <span className={styles["skeleton-name"]}></span>
+      <span className={styles["skeleton-type"]}></span>
+    </button>
+  );
+}

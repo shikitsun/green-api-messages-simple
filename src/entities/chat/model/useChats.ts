@@ -16,5 +16,5 @@ export function useChats() {
     return [...pending.chats, ...(chats.data ?? [])];
   }, [chats.data, pending.chats]);
 
-  return all;
+  return { data: all, isLoading: chats.isLoading && !pending.chats.length };
 }

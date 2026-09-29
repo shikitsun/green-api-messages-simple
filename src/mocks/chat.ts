@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { randomWaiting } from "./utils";
 
 const RANDOM_NAMES = ["Alexey", "Maria", "Dmitryi", "Elena", "Ivan", "Olga"];
 const RANDOM_NUMBERS = [79001112233, 79112223344, 79223334455, 79334445566];
@@ -68,26 +69,31 @@ export const chatHandlers = [
     const body = await request.json();
     const phoneNumber = (body as { phoneNumber: number }).phoneNumber;
     const isExist = RANDOM_NUMBERS.includes(phoneNumber);
+    await randomWaiting(5000);
     return HttpResponse.json({
       exist: isExist,
       chatId: isExist ? String(phoneNumber) : null,
     });
   }),
 
-  http.get(getEndpoint("getChats"), () => HttpResponse.json(MOCK_CHATS)),
+  http.get(getEndpoint("getChats"), async () => {
+    await randomWaiting(10000);
+    return HttpResponse.json(MOCK_CHATS);
+  }),
 
-  http.get(getEndpoint("receiveNotification"), ({ request }) => {
+  http.get(getEndpoint("receiveNotification"), async ({ request }) => {
     if (mockNotificationQueue.length === 0) {
       return new HttpResponse(null, { status: 204 });
     }
 
     const nextMsg = mockNotificationQueue[0];
+    await randomWaiting(2000);
     return HttpResponse.json(nextMsg);
   }),
 
   http.delete(
     `${import.meta.env.VITE_GREEN_API_BASE}/waInstancetest/deleteNotification/:apiTokenInstance/:receiptId`,
-    ({ params }) => {
+    async ({ params }) => {
       const rId = Number(params.receiptId);
       const index = mockNotificationQueue.findIndex((m) => m.receiptId === rId);
 
@@ -95,6 +101,7 @@ export const chatHandlers = [
         mockNotificationQueue.splice(index, 1);
         return HttpResponse.json({ status: "ok" });
       }
+      await randomWaiting(1000);
       return new HttpResponse(null, { status: 404 });
     },
   ),
@@ -123,6 +130,7 @@ export const chatHandlers = [
         },
       },
     });
+    await randomWaiting(10000);
     return HttpResponse.json({ status: "success" });
   }),
 

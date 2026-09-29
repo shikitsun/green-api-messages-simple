@@ -9,5 +9,9 @@ export { useChats } from "./model/useChats";
 export { useActiveChatStore } from "./model/useActiveChat";
 
 // ui
-export { ChatPreview, type IChatPreviewProps } from "./ui/ChatPreview";
+export {
+  ChatPreview,
+  type IChatPreviewProps,
+  ChatPreviewSkeleton,
+} from "./ui/ChatPreview";
 export { ChatAvatar } from "./ui/ChatAvatar";
