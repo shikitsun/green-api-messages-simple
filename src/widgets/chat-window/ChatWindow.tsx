@@ -7,6 +7,7 @@ import { sendMessage } from "@/entities/message/api/sendMessage";
 export default function ChatWindow({ id }: { id: string }) {
   const messages = useChatStore((state) => state.messagesByChat[id]);
   const add = useChatStore((state) => state.addMessage);
+  const setDraft = useChatStore((state) => state.setDraft);
 
   const [optimisticMessages, setOptimisticMessages] = useOptimistic(
     messages ?? [],
@@ -33,6 +34,7 @@ export default function ChatWindow({ id }: { id: string }) {
         setOptimisticMessages(message);
         const { idMessage } = await sendMessage(chatId, trimmedText);
         add(chatId, { ...message, id: idMessage });
+        setDraft(chatId, "");
       } catch (e) {
         if (e instanceof Error) return e.message;
         return "Unknown error";
