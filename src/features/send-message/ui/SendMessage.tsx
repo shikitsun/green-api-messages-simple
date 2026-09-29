@@ -23,7 +23,7 @@ export function SendMessage({ target, action, isPending }: ISendMessageProps) {
         disabled={isPending}
       />
 
-      <ButtonIcon type="submit" className="button--ghost">
+      <ButtonIcon type="submit" className="button--ghost" disabled={isPending}>
         {isPending ? (
           <LoadSpinIcon />
         ) : (
