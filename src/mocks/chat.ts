@@ -81,7 +81,7 @@ export const chatHandlers = [
     return HttpResponse.json(MOCK_CHATS);
   }),
 
-  http.get(getEndpoint("receiveNotification"), async ({ request }) => {
+  http.get(getEndpoint("receiveNotification"), async () => {
     if (mockNotificationQueue.length === 0) {
       return new HttpResponse(null, { status: 204 });
     }

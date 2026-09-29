@@ -9,12 +9,7 @@ const intl = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
 });
 
-export function MessageItem({
-  id,
-  isOutgoing,
-  text,
-  timestamp,
-}: IMessageItemProps) {
+export function MessageItem({ isOutgoing, text, timestamp }: IMessageItemProps) {
   return (
     <div
       className={styles.message}
