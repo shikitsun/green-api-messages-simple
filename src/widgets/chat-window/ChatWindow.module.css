@@ -12,3 +12,9 @@
     gap: var(--spacing-1);
   }
 }
+
+.send {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-1) * 2);
+}
