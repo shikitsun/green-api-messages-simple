@@ -11,6 +11,7 @@ interface IChatState {
   messagesByChat: Record<string, IMessage[]>;
   isLoading: boolean;
   error: string | null;
+  drafts: Record<string, string>;
 
   // Actions
   addMessage: (chatId: string, message: IMessage) => void;
@@ -18,15 +19,24 @@ interface IChatState {
   clearChat: (chatId: string) => void;
   setError: (error: string | null) => void;
   setLoading: (isLoading: boolean) => void;
+  setDraft: (chatId: string, text: string) => void;
+  clearDrafts: () => void;
+  reset: () => void;
 }
 
 export const useChatStore = create<IChatState>((set) => ({
   messagesByChat: {},
   isLoading: false,
   error: null,
+  drafts: {},
 
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
+
+  setDraft: (chatId, text) =>
+    set((state) => ({ drafts: { ...state.drafts, [chatId]: text } })),
+
+  clearDrafts: () => set({ drafts: {} }),
 
   addMessage: (chatId, message) =>
     set((state) => {
