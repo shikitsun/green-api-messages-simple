@@ -1,7 +1,16 @@
-// Absolute necessary
 import { useInstanceStore } from "@/entities/instance";
+import { useToasts } from "@/shared/model/useToasts";
+import { ApiError } from "./ApiError";
 
 const BASE_URL = import.meta.env.VITE_GREEN_API_BASE;
+const SESSION_EXPIRED = "Session expired. Sign in again.";
+
+function expireSession() {
+  if (!useInstanceStore.getState().idInstance) return;
+
+  useInstanceStore.getState().clearCredentials();
+  useToasts.getState().push("error", SESSION_EXPIRED);
+}
 
 export async function apiRequest<T>(
   endpoint: string,
@@ -28,7 +37,7 @@ export async function apiRequest<T>(
   }
 
   if (!idInstance || !apiTokenInstance) {
-    throw new Error("Not authenticated: missing Green-API credentials");
+    throw new Error("Not authenticated: missing API credentials");
   }
 
   // if endpoint have multiple sections, split it by it to extract main part and query
@@ -41,10 +50,16 @@ export async function apiRequest<T>(
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new ApiError("Cannot reach API. Check your connection.");
+  }
 
   // receiveNotification answers 204 when there is nothing in the queue
   if (response.status === 204) {
@@ -53,10 +68,15 @@ export async function apiRequest<T>(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(
+    const message =
       errorData.message ||
-        `API error: ${response.status} ${response.statusText}`,
-    );
+      `API error: ${response.status} ${response.statusText}`;
+
+    if (response.status === 401) {
+      expireSession();
+    }
+
+    throw new ApiError(message, response.status);
   }
 
   return response.json() as Promise<T>;
