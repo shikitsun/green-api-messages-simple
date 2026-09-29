@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { AuthForm } from "../../../features/auth-api/ui/AuthForm";
 
 export default function Page() {
