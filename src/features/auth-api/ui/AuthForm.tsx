@@ -4,6 +4,7 @@ import { useInstanceStore } from "../../../entities/instance/model/useInstanceSt
 import { verifyInstanceConnection } from "../../../entities/instance/api/verifyInstance.js";
 import type { TInstanceState } from "@/entities/instance/model/model.js";
 import { Navigate } from "react-router";
+import { LoadSpinIcon } from "@/shared/ui/LoadSpin.js";
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -91,7 +92,14 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
           className="button button--large"
           disabled={isPending}
         >
-          {isPending ? "Verifying..." : "Continue"}
+          {isPending ? (
+            <>
+              <LoadSpinIcon />
+              Verifying...
+            </>
+          ) : (
+            "Continue"
+          )}
         </button>
       </form>
     </div>
