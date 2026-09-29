@@ -1,23 +1,25 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router";
+import { ErrorBoundary } from "../ErrorBoundary";
+import { useSessionTeardown } from "../model/useSessionTeardown";
+import { Toaster } from "@/shared/ui/Toaster";
+import { queryClient } from "./queryClient";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
-interface AppProvidersProps {
+interface IAppProvidersProps {
   children: React.ReactNode;
 }
 
-export const AppProviders = ({ children }: AppProvidersProps) => {
+export const AppProviders = ({ children }: IAppProvidersProps) => {
+  useSessionTeardown();
+
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{children}</BrowserRouter>
+      <ErrorBoundary>
+        <BrowserRouter>
+          {children}
+          <Toaster />
+        </BrowserRouter>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 };
