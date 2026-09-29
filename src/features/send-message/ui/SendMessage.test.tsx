@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useChatStore } from "@/entities/message";
 import { SendMessage } from "./SendMessage";
 
 function setup(isPending = false) {
@@ -51,6 +52,26 @@ describe("SendMessage", () => {
     expect(container.querySelector(".spin")).toBeNull();
     expect(container.querySelector('path[d^="M6 12"]')).not.toBeNull();
     expect(screen.getByPlaceholderText("Message...")).toBeEnabled();
+  });
+
+  it("shows the draft the user had typed", () => {
+    useChatStore.getState().setDraft("79001112233", "half-written");
+
+    setup();
+
+    expect(screen.getByPlaceholderText("Message...")).toHaveValue(
+      "half-written",
+    );
+  });
+
+  it("remembers what is being typed", () => {
+    setup();
+
+    fireEvent.change(screen.getByPlaceholderText("Message..."), {
+      target: { value: "typing" },
+    });
+
+    expect(useChatStore.getState().drafts["79001112233"]).toBe("typing");
   });
 
   it("hands the form data over to the action on submit", async () => {

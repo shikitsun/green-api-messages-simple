@@ -1,5 +1,6 @@
 import { type ComponentProps } from "react";
 import styles from "./SendMessage.module.css";
+import { useChatStore } from "@/entities/message";
 import { ButtonIcon } from "@/shared/ui/Button";
 import { LoadSpinIcon } from "@/shared/ui/LoadSpin";
 
@@ -10,10 +11,14 @@ interface ISendMessageProps {
 }
 
 export function SendMessage({ target, action, isPending }: ISendMessageProps) {
+  const draft = useChatStore((state) => state.drafts[target] ?? "");
+  const setDraft = useChatStore((state) => state.setDraft);
+
   return (
     <form className={styles.container} action={action}>
       <input type="hidden" name="id" value={target} />
       {/* In UI source prototype were used contenteditable, leave input there */}
+      {/* the draft lives in the store, so a session ending does not throw it away */}
       <input
         type="text"
         name="text"
@@ -21,6 +26,8 @@ export function SendMessage({ target, action, isPending }: ISendMessageProps) {
         required
         maxLength={4000}
         disabled={isPending}
+        value={draft}
+        onChange={(event) => setDraft(target, event.target.value)}
       />
 
       <ButtonIcon type="submit" className="button--ghost" disabled={isPending}>
