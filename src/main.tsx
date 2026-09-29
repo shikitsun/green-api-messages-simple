@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./app/App";
 import { AppProviders } from "./app/providers";
+import { registerUnhandledRejectionReporter } from "./shared/lib/reportUnhandledRejection";
+
+registerUnhandledRejectionReporter();
 
 async function enableMocking() {
   if (import.meta.env.MODE !== "development") {
