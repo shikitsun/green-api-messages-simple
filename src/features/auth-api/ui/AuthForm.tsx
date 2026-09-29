@@ -37,11 +37,15 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
           await verifyInstanceConnection({ idInstance, apiTokenInstance })
         )?.stateInstance,
       };
-      saveCredentials({
-        idInstance: idInstance,
-        apiTokenInstance: apiTokenInstance,
-      });
-      onSuccess?.();
+
+      if (result.state === "authorized") {
+        saveCredentials({
+          idInstance: idInstance,
+          apiTokenInstance: apiTokenInstance,
+        });
+        onSuccess?.();
+      }
+
       return result;
     } catch {}
 
