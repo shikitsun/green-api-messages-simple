@@ -9,7 +9,7 @@ export default function ChatWindow({ id }: { id: string }) {
   const add = useChatStore((state) => state.addMessage);
 
   const [optimisticMessages, setOptimisticMessages] = useOptimistic(
-    messages,
+    messages ?? [],
     (state, message: IMessage) => {
       return [...state, message];
     },
@@ -20,20 +20,19 @@ export default function ChatWindow({ id }: { id: string }) {
       const text = formData.get("text") as string;
       if (!text.trim()) return "Message is empty";
 
+      const chatId = formData.get("id") as string;
+      const trimmedText = text.trim();
+
       try {
         const message: IMessage = {
           id: `${Math.random() * -1}`,
           isOutgoing: true,
-          text: text.trim(),
+          text: trimmedText,
           timestamp: Date.now() / 1000,
         };
         setOptimisticMessages(message);
-        const { idMessage } = await sendMessage(
-          formData.get("id") as string,
-          formData.get("text") as string,
-        );
-        message.id = idMessage;
-        add(formData.get("id") as string, message);
+        const { idMessage } = await sendMessage(chatId, trimmedText);
+        add(chatId, { ...message, id: idMessage });
       } catch (e) {
         if (e instanceof Error) return e.message;
         return "Unknown error";
