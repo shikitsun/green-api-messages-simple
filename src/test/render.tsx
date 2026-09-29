@@ -1,19 +1,19 @@
 import type { ReactElement, ReactNode } from "react";
 import { render, renderHook } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
+import { createQueryClient } from "@/app/providers/queryClient";
+import { Toaster } from "@/shared/ui/Toaster";
 
 export function createTestQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0, staleTime: 0 },
-    },
+  return createQueryClient({
+    queries: { retry: false, gcTime: 0, staleTime: 0 },
   });
 }
 
 interface IProviderOptions {
   route?: string;
-  queryClient?: QueryClient;
+  queryClient?: ReturnType<typeof createTestQueryClient>;
 }
 
 function createWrapper({ route = "/", queryClient }: IProviderOptions = {}) {
@@ -23,7 +23,10 @@ function createWrapper({ route = "/", queryClient }: IProviderOptions = {}) {
     client,
     wrapper: ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={client}>
-        <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+        <MemoryRouter initialEntries={[route]}>
+          {children}
+          <Toaster />
+        </MemoryRouter>
       </QueryClientProvider>
     ),
   };

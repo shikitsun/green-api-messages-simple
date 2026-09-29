@@ -3,6 +3,7 @@ import type { INotificationResponse } from "@/entities/message";
 interface INotificationOverrides {
   receiptId?: number;
   typeWebhook?: string;
+  typeMessage?: string;
   chatId?: string;
   text?: string;
   idMessage?: string;
@@ -13,6 +14,7 @@ interface INotificationOverrides {
 export function createNotification({
   receiptId = 42,
   typeWebhook = "incomingMessageReceived",
+  typeMessage = "textMessage",
   chatId = "79001112233",
   text = "hi from the recipient",
   idMessage = "msg-1",
@@ -40,7 +42,7 @@ export function createNotification({
         senderPhoneNumber: Number(chatId),
       },
       messageData: {
-        typeMessage: "textMessage",
+        typeMessage,
         textMessageData: { textMessage: text },
       },
     },
