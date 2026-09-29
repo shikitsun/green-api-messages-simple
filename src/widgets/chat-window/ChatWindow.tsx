@@ -8,18 +8,26 @@ export default function ChatWindow({ id }: { id: string }) {
   const messages = useChatStore((state) => state.messagesByChat[id]);
   const add = useChatStore((state) => state.addMessage);
 
-  const [optimisticMessages, setOptimisticMessages] = useOptimistic(messages);
+  const [optimisticMessages, setOptimisticMessages] = useOptimistic(
+    messages,
+    (state, message: IMessage) => {
+      return [...state, message];
+    },
+  );
 
   const [errorMessage, action, isPending] = useActionState(
     async (_: string, formData: FormData) => {
+      const text = formData.get("text") as string;
+      if (!text.trim()) return "Message is empty";
+
       try {
         const message: IMessage = {
           id: `${Math.random() * -1}`,
           isOutgoing: true,
-          text: formData.get("text") as string,
+          text: text.trim(),
           timestamp: Date.now() / 1000,
         };
-        setOptimisticMessages((prev) => [...prev, message]);
+        setOptimisticMessages(message);
         const { idMessage } = await sendMessage(
           formData.get("id") as string,
           formData.get("text") as string,

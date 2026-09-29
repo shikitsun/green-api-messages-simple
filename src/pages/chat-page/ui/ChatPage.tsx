@@ -5,7 +5,8 @@ import { useActiveChatStore } from "@/entities/chat";
 import { lazy, Suspense } from "react";
 import { LoadSpinIcon } from "@/shared/ui/LoadSpin";
 
-const ChatWindow = lazy(() => import("@/widgets/chat-window/ChatWindow"));
+const chatWindowPromise = import("@/widgets/chat-window/ChatWindow");
+const ChatWindow = lazy(() => chatWindowPromise);
 
 export default function Page() {
   useMessagesListener();
@@ -31,7 +32,7 @@ export default function Page() {
             </div>
           }
         >
-          <ChatWindow id={active} />
+          <ChatWindow key={active} id={active} />
         </Suspense>
       )}
     </div>

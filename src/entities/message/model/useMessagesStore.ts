@@ -29,14 +29,21 @@ export const useChatStore = create<IChatState>((set) => ({
   setError: (error) => set({ error }),
 
   addMessage: (chatId, message) =>
-    set((state) => ({
-      messagesByChat: {
-        ...state.messagesByChat,
-        [chatId]: [...(state.messagesByChat[chatId] || []), message].sort(
-          (a, b) => a.timestamp - b.timestamp,
-        ),
-      },
-    })),
+    set((state) => {
+      const messages = state.messagesByChat[chatId] || [];
+
+      // dedup
+      if (messages.findIndex((m) => m.id === message.id) !== -1) return state;
+
+      return {
+        messagesByChat: {
+          ...state.messagesByChat,
+          [chatId]: [...messages, message].sort(
+            (a, b) => a.timestamp - b.timestamp,
+          ),
+        },
+      };
+    }),
 
   setMessages: (chatId, messages) =>
     set((state) => ({

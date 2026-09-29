@@ -108,12 +108,13 @@ export const chatHandlers = [
 
   http.post(getEndpoint("sendMessage"), async ({ request }) => {
     const body = (await request.json()) as { chatId: string; message: string };
+    const idMessage = `user-${Date.now()}-${Math.random()}`;
     mockNotificationQueue.push({
       receiptId: Math.floor(Math.random() * 1000000),
       body: {
         typeWebhook: "incomingMessageReceived",
         timestamp: Date.now(),
-        idMessage: `user-${Date.now()}-${Math.random()}`,
+        idMessage: idMessage,
         senderData: {
           chatId: String(body.chatId),
           chatName: "Contact",
@@ -131,7 +132,7 @@ export const chatHandlers = [
       },
     });
     await randomWaiting(10000);
-    return HttpResponse.json({ status: "success" });
+    return HttpResponse.json({ idMessage });
   }),
 
   http.post("**/injectRandomMessages", async ({ request }) => {
