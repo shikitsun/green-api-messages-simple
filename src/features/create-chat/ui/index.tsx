@@ -1,8 +1,7 @@
 import { useActionState, useLayoutEffect, useRef } from "react";
 import styles from "./CreateChatModel.module.css";
-import { useChats } from "@/entities/chat";
+import { useChats, useLocalChatsStore } from "@/entities/chat";
 import { createChat } from "../api";
-import { usePendingChatsStore } from "@/entities/chat/model/usePendingChatsStore";
 
 export interface ICreateChatModalProps {
   onSuccess: (chatId: string) => void;
@@ -12,7 +11,7 @@ export interface ICreateChatModalProps {
 export function CreateChatModal({ onClose, onSuccess }: ICreateChatModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const chats = useChats();
-  const { add } = usePendingChatsStore();
+  const add = useLocalChatsStore((state) => state.add);
 
   const [error, action, isPending] = useActionState(
     async (_: string, form: FormData) => {
@@ -25,7 +24,7 @@ export function CreateChatModal({ onClose, onSuccess }: ICreateChatModalProps) {
 
       const chatId = result.payload;
       if (chats.data.findIndex((c) => c.chatId === chatId) === -1) {
-        add(chatId);
+        add({ chatId, name: chatId, phoneNumber: value, type: "user" });
       }
 
       onSuccess(chatId);

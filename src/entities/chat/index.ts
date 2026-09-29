@@ -4,9 +4,11 @@ export { checkAccount, type ICheckAccountResponse } from "./api/checkAccount";
 
 // model
 
-export { type IChat } from "./model/chat";
+export { toChatType, type IChat } from "./model/chat";
+export { orderChatsByActivity } from "./model/orderChats";
 export { useChats } from "./model/useChats";
 export { useActiveChatStore } from "./model/useActiveChat";
+export { useLocalChatsStore } from "./model/useLocalChatsStore";
 
 // ui
 export {

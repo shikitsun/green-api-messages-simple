@@ -1,18 +1,27 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./ChatList.module.css";
 import {
   ChatPreview,
   ChatPreviewSkeleton,
+  orderChatsByActivity,
   useActiveChatStore,
   useChats,
 } from "@/entities/chat";
+import { useChatStore } from "@/entities/message";
 import { ButtonIcon } from "@/shared/ui/Button";
 import { CreateChatModal } from "@/features/create-chat";
 
 export default function ChatList() {
   const { data: chats, isLoading } = useChats();
+  const messagesByChat = useChatStore((state) => state.messagesByChat);
   const [creatingChat, setCreatingChat] = useState(false);
   const { active, set } = useActiveChatStore();
+
+  // the conversation that just received a message moves to the top
+  const orderedChats = useMemo(
+    () => orderChatsByActivity(chats, messagesByChat),
+    [chats, messagesByChat],
+  );
 
   return (
     <aside className={styles.container}>
@@ -58,7 +67,7 @@ export default function ChatList() {
           </>
         )}
 
-        {chats.map((chat) => (
+        {orderedChats.map((chat) => (
           <ChatPreview
             key={chat.chatId}
             chatId={chat.chatId}

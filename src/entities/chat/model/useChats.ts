@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getChats } from "../api/getChats";
-import { usePendingChatsStore } from "./usePendingChatsStore";
 import { useMemo } from "react";
+import { getChats } from "../api/getChats";
+import { useLocalChatsStore } from "./useLocalChatsStore";
+import type { IChat } from "./chat";
 
 export function useChats() {
   const chats = useQuery({
@@ -9,12 +10,18 @@ export function useChats() {
     queryFn: getChats,
   });
 
-  const pending = usePendingChatsStore();
+  const localChats = useLocalChatsStore((state) => state.chats);
 
   const all = useMemo(() => {
-    // don't check chats already exists there or not
-    return [...pending.chats, ...(chats.data ?? [])];
-  }, [chats.data, pending.chats]);
+    const byId = new Map<string, IChat>();
 
-  return { data: all, isLoading: chats.isLoading && !pending.chats.length };
+    // locally known chats first; the API is authoritative for the ones it reports
+    for (const chat of [...localChats, ...(chats.data ?? [])]) {
+      byId.set(chat.chatId, chat);
+    }
+
+    return [...byId.values()];
+  }, [chats.data, localChats]);
+
+  return { data: all, isLoading: chats.isLoading && !localChats.length };
 }
