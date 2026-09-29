@@ -6,30 +6,32 @@ import {
 } from "@/entities/message";
 import { useCallback, useEffect, useRef } from "react";
 
+const POLL_INTERVAL = 10_000;
+
 export function useMessagesListener() {
   const addMessage = useChatStore((state) => state.addMessage);
   const isRunning = useRef(true);
+  const exponentialBackoff = useRef(1);
 
   const poll = useCallback(async () => {
-    let exponentialBackoff = 1;
+    if (!isRunning.current) return;
 
     try {
       const response = await receiveNotifications();
 
-      if (response && response.body) {
+      if (response?.body) {
         const body = response.body;
-        const chatId = body.senderData.chatId;
-        addMessage(chatId, transformMessage(body, false));
+        addMessage(body.senderData.chatId, transformMessage(body, false));
+
         await deleteNotification(response.receiptId);
-        // after success - reset
-        exponentialBackoff = 1;
+        exponentialBackoff.current = 1;
       }
     } catch (error) {
       console.error("Polling error:", error);
-      exponentialBackoff += Math.E;
+      exponentialBackoff.current += Math.E;
     } finally {
       if (isRunning.current) {
-        setTimeout(poll, 10000 * exponentialBackoff);
+        setTimeout(poll, POLL_INTERVAL * exponentialBackoff.current);
       }
     }
   }, [addMessage]);
