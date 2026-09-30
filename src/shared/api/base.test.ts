@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { apiRequest } from "./base";
-import { ApiError } from "./ApiError";
+import { ApiError, ApiTimeoutError, ApiUnreachableError } from "./errors";
 import { useInstanceStore } from "@/entities/instance";
 import { useToasts } from "@/shared/model/useToasts";
 import {
@@ -121,6 +121,9 @@ describe("apiRequest", () => {
     );
 
     await expect(apiRequest("getChats")).rejects.toBeInstanceOf(ApiError);
+    await expect(apiRequest("getChats")).rejects.toBeInstanceOf(
+      ApiUnreachableError,
+    );
     await expect(apiRequest("getChats")).rejects.toThrow(/Cannot reach API/);
   });
 
@@ -238,17 +241,20 @@ describe("apiRequest", () => {
         (_url: string, init: RequestInit) =>
           new Promise((_resolve, reject) => {
             init.signal?.addEventListener("abort", () =>
-              reject(Object.assign(new Error("aborted"), { name: "AbortError" })),
+              reject(
+                Object.assign(new Error("aborted"), { name: "AbortError" }),
+              ),
             );
           }),
       ),
     );
 
-    const pending = expect(apiRequest("getChats")).rejects.toThrow(
-      /did not answer in time/,
-    );
+    const pending = apiRequest("getChats").catch((e: unknown) => e);
 
     await vi.advanceTimersByTimeAsync(20_000);
-    await pending;
+
+    const error = await pending;
+
+    expect(error).toBeInstanceOf(ApiTimeoutError);
   });
 });

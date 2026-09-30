@@ -3,7 +3,7 @@ import {
   QueryClient,
   type QueryClientConfig,
 } from "@tanstack/react-query";
-import { ApiError } from "@/shared/api/ApiError";
+import { ApiError } from "@/shared/api/errors";
 import { toErrorMessage } from "@/shared/lib/errorMessage";
 import { useToasts } from "@/shared/model/useToasts";
 

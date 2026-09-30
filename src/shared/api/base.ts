@@ -1,6 +1,6 @@
 import { useInstanceStore } from "@/entities/instance";
 import { useToasts } from "@/shared/model/useToasts";
-import { ApiError } from "./ApiError";
+import { ApiError, ApiTimeoutError, ApiUnreachableError } from "./errors";
 
 const BASE_URL = import.meta.env.VITE_GREEN_API_BASE;
 const SESSION_EXPIRED = "Session expired. Sign in again.";
@@ -80,11 +80,11 @@ export async function apiRequest<T>(
       signal: controller.signal,
     });
   } catch (error) {
-    throw new ApiError(
-      (error as Error)?.name === "AbortError"
-        ? "The API did not answer in time. Check your connection."
-        : "Cannot reach API. Check your connection.",
-    );
+    if ((error as Error)?.name === "AbortError") {
+      throw new ApiTimeoutError();
+    }
+
+    throw new ApiUnreachableError();
   } finally {
     clearTimeout(timeout);
   }
@@ -104,11 +104,10 @@ export async function apiRequest<T>(
       expireSession();
     }
 
-    throw new ApiError(
-      message,
-      response.status,
-      parseRetryAfter(response.headers.get("Retry-After")),
-    );
+    throw new ApiError(message, {
+      status: response.status,
+      retryAfter: parseRetryAfter(response.headers.get("Retry-After")),
+    });
   }
 
   return response.json() as Promise<T>;

@@ -16,7 +16,7 @@ import {
   receiveNotifications,
   useChatStore,
 } from "@/entities/message";
-import { ApiError } from "@/shared/api/ApiError";
+import { ApiError } from "@/shared/api/errors";
 import { useMessagesListener } from "./useMessagesListener";
 import { createNotification, withoutMessagePayload } from "@/test/fixtures";
 import { useLocalChatsStore } from "@/entities/chat";
@@ -166,7 +166,9 @@ describe("useMessagesListener", () => {
   it("waits as long as the API asks when it is throttled", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     vi.mocked(receiveNotifications)
-      .mockRejectedValueOnce(new ApiError("Too Many Requests", 429, 45))
+      .mockRejectedValueOnce(
+        new ApiError("Too Many Requests", { status: 429, retryAfter: 45 }),
+      )
       .mockResolvedValue(undefined);
 
     setup();
@@ -184,7 +186,9 @@ describe("useMessagesListener", () => {
   it("does wait longer than minute if the API asks for more", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     vi.mocked(receiveNotifications)
-      .mockRejectedValueOnce(new ApiError("Too Many Requests", 429, 600))
+      .mockRejectedValueOnce(
+        new ApiError("Too Many Requests", { status: 429, retryAfter: 600 }),
+      )
       .mockResolvedValue(undefined);
 
     setup();
@@ -294,7 +298,7 @@ describe("useMessagesListener", () => {
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
     vi.mocked(receiveNotifications).mockRejectedValue(
-      new ApiError("Unauthorized", 401),
+      new ApiError("Unauthorized", { status: 401 }),
     );
 
     setup();
