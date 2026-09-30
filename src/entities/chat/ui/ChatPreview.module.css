@@ -14,14 +14,17 @@
 
   & span {
     font-weight: 600;
-    color: var(--text-primary);
-    grid-area: "title";
     align-self: flex-start;
 
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
     overflow: hidden;
+  }
+
+  & span:not(.type) {
+    color: var(--text-primary);
+    grid-area: "title";
   }
 
   & > [role="figure"] {
