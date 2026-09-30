@@ -52,8 +52,39 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  build:
+  e2e:
     needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Acceptance run
+        run: npm run e2e
+
+      - name: Keep the failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failures
+          path: .vitest/attachments
+          if-no-files-found: ignore
+          retention-days: 7
+
+  build:
+    needs: [verify, e2e]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:

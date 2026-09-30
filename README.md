@@ -162,6 +162,17 @@ npm run coverage      # the same, plus the coverage report and the thresholds
 npx vitest            # watch
 ```
 
+Coverage is measured over the shipped app (`src/**`, minus the dev harness, the test helpers and the test
+files themselves) and the run fails under the thresholds declared in `vite.config.ts`.
+
+### Acceptance run
+
+```bash
+npx playwright install chromium firefox   # once
+npm run e2e                               # Vitest browser mode, real browser
+npm run e2e -- --project=chromium         # one browser of the matrix
+```
+
 ## Known limitations
 
 - Credentials are kept in memory on purpose: instance tokens in `localStorage`/`sessionStorage` are readable by any
