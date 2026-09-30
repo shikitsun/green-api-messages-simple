@@ -30,7 +30,11 @@ export default function ChatList() {
     >
       <header>
         <h2 className="title">Chats</h2>
-        <ButtonIcon type="button" onClick={() => setCreatingChat(true)}>
+        <ButtonIcon
+          type="button"
+          onClick={() => setCreatingChat(true)}
+          aria-label="Find chat"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

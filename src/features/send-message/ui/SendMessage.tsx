@@ -30,7 +30,12 @@ export function SendMessage({ target, action, isPending }: ISendMessageProps) {
         onChange={(event) => setDraft(target, event.target.value)}
       />
 
-      <ButtonIcon type="submit" className="button--ghost" disabled={isPending}>
+      <ButtonIcon
+        type="submit"
+        className="button--ghost"
+        disabled={isPending}
+        aria-label="Send"
+      >
         {isPending ? (
           <LoadSpinIcon />
         ) : (
