@@ -71,8 +71,8 @@ Emulated:
 - `getStateInstance` → `authorized`;
 - `checkAccount` → `79001112233`, `79112223344`, `79223334455`, `79334445566` are considered to exist;
 - `getChats` → three chats: `79001112233` (User1), `79112223344` (User2), `79223334455` (Group1);
-- `sendMessage` → returns an `idMessage` and queues an echo of the sent message (same `idMessage`, so the UI
-  does not duplicate it);
+- `sendMessage` → returns an `idMessage` and queues an `outgoingAPIMessageReceived` notification for it, which the
+  app acknowledges and ignores (only `incomingMessageReceived` is rendered);
 - `receiveNotification` / `deleteNotification` → an in-memory queue with acknowledgement.
 
 Mock delays are random (up to 10 s) to exercise loading and pending states.
@@ -87,8 +87,8 @@ fetch("/injectRandomMessages", {
 });
 ```
 
-There is no auto-reply: the echo of an outgoing message is dropped by the `idMessage` deduplication. To see an
-incoming message, fill the queue or reply from a phone bound to a real instance.
+There is no auto-reply, so the mock never produces an incoming message on its own. To see one, fill the queue (see
+above) or reply from a phone bound to a real instance.
 
 ## Architecture
 
@@ -162,10 +162,6 @@ npx vitest            # watch
 - Green API does not expose message history: conversations live for the duration of the browser session.
 - Non-text messages (`imageMessage`, …) are acknowledged and ignored: the app is text-only.
 - No virtualisation of the message list (noted in the code) and no auto-scroll to the latest message.
-
-## TODO
-
-- Implement adaptive design
 
 ## AI full disclosure
 

@@ -36,7 +36,7 @@ jobs:
         run: npm run build
         env:
           BASE_URL: /${{ github.event.repository.name }}/
-          VITE_GREEN_API_BASE: https://3100.api.green-api.com
+          VITE_GREEN_API_BASE: https://api.green-api.com
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

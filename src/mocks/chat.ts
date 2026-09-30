@@ -42,7 +42,7 @@ function generateRandomMessage() {
     receiptId: receiptId,
     body: {
       typeWebhook: "incomingMessageReceived",
-      timestamp: Date.now(),
+      timestamp: Math.floor(Date.now() / 1000),
       idMessage: `rand-${receiptId}`,
       senderData: {
         chatId: String(randomPhone),
@@ -112,8 +112,10 @@ export const chatHandlers = [
     mockNotificationQueue.push({
       receiptId: Math.floor(Math.random() * 1000000),
       body: {
-        typeWebhook: "incomingMessageReceived",
-        timestamp: Date.now(),
+        // a message sent through the API is reported as outgoingAPIMessageReceived:
+        // the app acknowledges it and renders only incomingMessageReceived
+        typeWebhook: "outgoingAPIMessageReceived",
+        timestamp: Math.floor(Date.now() / 1000),
         idMessage: idMessage,
         senderData: {
           chatId: String(body.chatId),
