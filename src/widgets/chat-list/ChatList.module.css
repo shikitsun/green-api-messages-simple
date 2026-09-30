@@ -3,7 +3,8 @@
   flex-direction: column;
   background-color: var(--background-primary);
   width: min(100dvw, 20rem);
-  height: 100dvh;
+  height: 100%;
+  min-height: 0;
   overflow-y: auto;
 
   gap: calc(var(--spacing-1) * 2);
@@ -13,5 +14,20 @@
     align-items: center;
     justify-content: space-between;
     padding: calc(var(--spacing-1) * 4);
+  }
+
+  @media screen and (max-width: 48rem) {
+    width: 100%;
+
+    &[data-chat-open="true"] {
+      display: none;
+    }
+
+    & > header {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 1;
+      background-color: var(--background-primary);
+    }
   }
 }

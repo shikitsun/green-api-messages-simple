@@ -99,4 +99,16 @@ describe("ChatList", () => {
         ?.textContent,
     ).toBe("User2");
   });
+
+  it("marks itself as covered while a conversation is open", async () => {
+    const { container } = setup();
+    await screen.findByText("User2");
+
+    const sidebar = container.querySelector("aside");
+    expect(sidebar).not.toHaveAttribute("data-chat-open");
+
+    fireEvent.click(screen.getByText("User2"));
+
+    expect(sidebar).toHaveAttribute("data-chat-open", "true");
+  });
 });

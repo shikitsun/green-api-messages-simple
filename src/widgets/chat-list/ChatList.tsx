@@ -24,7 +24,10 @@ export default function ChatList() {
   );
 
   return (
-    <aside className={styles.container}>
+    <aside
+      className={styles.container}
+      data-chat-open={active ? "true" : undefined}
+    >
       <header>
         <h2 className="title">Chats</h2>
         <ButtonIcon type="button" onClick={() => setCreatingChat(true)}>
