@@ -1,13 +1,18 @@
 import { MessageItem, useChatStore, type IMessage } from "@/entities/message";
 import styles from "./ChatWindow.module.css";
 import { SendMessage } from "@/features/send-message/ui/SendMessage";
-import { useActionState, useOptimistic } from "react";
+import { useActionState, useLayoutEffect, useOptimistic, useRef } from "react";
 import { sendMessage } from "@/entities/message/api/sendMessage";
+
+const FOLLOW_THRESHOLD = 80;
 
 export default function ChatWindow({ id }: { id: string }) {
   const messages = useChatStore((state) => state.messagesByChat[id]);
   const add = useChatStore((state) => state.addMessage);
   const setDraft = useChatStore((state) => state.setDraft);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const followsLatest = useRef(true);
 
   const [optimisticMessages, setOptimisticMessages] = useOptimistic(
     messages ?? [],
@@ -45,9 +50,25 @@ export default function ChatWindow({ id }: { id: string }) {
     "",
   );
 
+  useLayoutEffect(() => {
+    const list = listRef.current;
+
+    if (list && followsLatest.current) list.scrollTop = list.scrollHeight;
+  }, [optimisticMessages.length]);
+
+  const handleScroll = () => {
+    const list = listRef.current;
+
+    if (!list) return;
+
+    followsLatest.current =
+      list.scrollHeight - list.scrollTop - list.clientHeight <=
+      FOLLOW_THRESHOLD;
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.list}>
+      <div className={styles.list} ref={listRef} onScroll={handleScroll}>
         {/* can add virtual scrolling via tanstack virtual or virtua, but for now keep it simple */}
         {optimisticMessages?.map((message) => (
           <MessageItem key={message.id} {...message} />

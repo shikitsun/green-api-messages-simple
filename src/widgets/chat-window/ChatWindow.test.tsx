@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { server } from "@/mocks/node";
 import ChatWindow from "./ChatWindow";
@@ -137,5 +137,69 @@ describe("ChatWindow", () => {
     setup();
 
     expect(screen.getByText("earlier message")).toBeInTheDocument();
+  });
+
+  describe("scrolling to the latest message", () => {
+    function stubScrollMetrics(scrollHeight = 1200, clientHeight = 300) {
+      vi.spyOn(HTMLElement.prototype, "scrollHeight", "get").mockReturnValue(
+        scrollHeight,
+      );
+      vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockReturnValue(
+        clientHeight,
+      );
+    }
+
+    const messageList = () =>
+      screen.getAllByRole("listitem")[0].parentElement as HTMLDivElement;
+
+    function storeMessage(id: string, text: string, timestamp: number) {
+      useChatStore.getState().addMessage(CHAT_ID, {
+        id,
+        text,
+        timestamp,
+        isOutgoing: false,
+      });
+    }
+
+    it("opens the chat at its latest message", () => {
+      authedAsTestInstance();
+      stubScrollMetrics();
+      storeMessage("old-1", "earlier message", 1712345678);
+      storeMessage("old-2", "latest message", 1712345679);
+
+      setup();
+
+      expect(messageList().scrollTop).toBe(1200);
+    });
+
+    it("follows an incoming message while the user is at the bottom", () => {
+      authedAsTestInstance();
+      stubScrollMetrics();
+      storeMessage("old-1", "earlier message", 1712345678);
+      setup();
+
+      stubScrollMetrics(1500);
+      act(() => storeMessage("new-1", "just arrived", 1712345680));
+
+      expect(screen.getByText("just arrived")).toBeInTheDocument();
+      expect(messageList().scrollTop).toBe(1500);
+    });
+
+    it("keeps the position when the user is reading history above", () => {
+      authedAsTestInstance();
+      stubScrollMetrics();
+      storeMessage("old-1", "earlier message", 1712345678);
+      setup();
+
+      const list = messageList();
+      list.scrollTop = 0;
+      fireEvent.scroll(list);
+
+      stubScrollMetrics(1500);
+      act(() => storeMessage("new-1", "just arrived", 1712345680));
+
+      expect(screen.getByText("just arrived")).toBeInTheDocument();
+      expect(messageList().scrollTop).toBe(0);
+    });
   });
 });
