@@ -11,6 +11,9 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] }),
     tsconfigPaths(),
   ],
+  css: {
+    transformer: "postcss",
+  },
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
