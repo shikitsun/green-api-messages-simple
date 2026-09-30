@@ -186,4 +186,4 @@ npm run e2e -- --project=chromium         # one browser of the matrix
 
 ## AI full disclosure
 
-> This software is developed with assistance from AI coding agents, mostly from open weights: gemma 4 26B A4B and deepseek V4.1 Flash. With human leading the ideas, testing, and debugging, all code in the end are reviewed before commiting. Earlier artifacts (in first commits) could be missed as well. Created tests, toasts, updated some stores and utilities and changed that README as well with them
+> This software is developed with assistance from AI coding agents, mostly from open weights: gemma 4 26B A4B and deepseek V4.1 Flash. With human leading the ideas, testing, and debugging, all code in the end are reviewed before commiting. Earlier artifacts (in first commits) could be missed as well. Created tests, toasts, updated some stores and utilities and changed that README as well with them.
