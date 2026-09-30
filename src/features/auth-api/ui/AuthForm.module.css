@@ -1,14 +1,16 @@
 .form-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100dvw;
   height: 100dvh;
+  padding: calc(var(--spacing-1) * 4);
+  overflow-y: auto;
 }
 
 .form {
   display: grid;
-  grid-template-columns: repeat(1, min(100dvw - 8rem, 21rem));
+  grid-template-columns: 1fr;
+  margin: auto;
+  width: min(100%, 21rem);
 
   align-items: center;
   box-shadow: var(--shadow-100);
@@ -17,4 +19,8 @@
 
   padding: calc(var(--spacing-1) * 8);
   border-radius: var(--rounded-sxl);
+
+  @media screen and (max-width: 48rem) {
+    padding: calc(var(--spacing-1) * 6) calc(var(--spacing-1) * 5);
+  }
 }
