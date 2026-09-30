@@ -179,4 +179,76 @@ describe("apiRequest", () => {
     );
     expect(useToasts.getState().toasts).toEqual([]);
   });
+
+  it("carries the pause the API asked for when it is throttled", async () => {
+    authedAsTestInstance();
+    stubFetch(
+      jsonResponse(
+        { message: "Too Many Requests" },
+        { status: 429, headers: { "Retry-After": "30" } },
+      ),
+    );
+
+    const error = await apiRequest("getChats").catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect((error as ApiError).status).toBe(429);
+    expect((error as ApiError).retryAfter).toBe(30);
+  });
+
+  it("understands a Retry-After given as a date", async () => {
+    authedAsTestInstance();
+    stubFetch(
+      jsonResponse(
+        { message: "Service Unavailable" },
+        {
+          status: 503,
+          headers: {
+            "Retry-After": new Date(Date.now() + 60_000).toUTCString(),
+          },
+        },
+      ),
+    );
+
+    const error = (await apiRequest("getChats").catch(
+      (e: unknown) => e,
+    )) as ApiError;
+
+    expect(error.retryAfter).toBeGreaterThan(55);
+    expect(error.retryAfter).toBeLessThanOrEqual(60);
+  });
+
+  it("leaves the pause to the caller when the API does not ask for one", async () => {
+    authedAsTestInstance();
+    stubFetch(jsonResponse({ message: "Too Many Requests" }, { status: 429 }));
+
+    const error = (await apiRequest("getChats").catch(
+      (e: unknown) => e,
+    )) as ApiError;
+
+    expect(error.retryAfter).toBeNull();
+  });
+
+  it("gives up on a request that never answers", async () => {
+    authedAsTestInstance();
+    vi.useFakeTimers();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        (_url: string, init: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init.signal?.addEventListener("abort", () =>
+              reject(Object.assign(new Error("aborted"), { name: "AbortError" })),
+            );
+          }),
+      ),
+    );
+
+    const pending = expect(apiRequest("getChats")).rejects.toThrow(
+      /did not answer in time/,
+    );
+
+    await vi.advanceTimersByTimeAsync(20_000);
+    await pending;
+  });
 });

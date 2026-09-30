@@ -4,6 +4,21 @@ import { ApiError } from "./ApiError";
 
 const BASE_URL = import.meta.env.VITE_GREEN_API_BASE;
 const SESSION_EXPIRED = "Session expired. Sign in again.";
+const REQUEST_TIMEOUT = 20_000;
+
+function parseRetryAfter(header: string | null): number | null {
+  if (!header) return null;
+
+  const seconds = Number(header);
+
+  if (Number.isFinite(seconds) && seconds >= 0) return seconds;
+
+  const date = Date.parse(header);
+
+  if (Number.isNaN(date)) return null;
+
+  return Math.max(0, Math.ceil((date - Date.now()) / 1000));
+}
 
 function expireSession() {
   if (!useInstanceStore.getState().idInstance) return;
@@ -51,14 +66,27 @@ export async function apiRequest<T>(
   headers.set("Content-Type", "application/json");
 
   let response: Response;
+  const controller = new AbortController();
+  // if user-defined signal are aborted - abort inner controller too
+  options?.signal?.addEventListener("abort", () => {
+    controller.abort();
+  });
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
   try {
     response = await fetch(url, {
       ...options,
       headers,
+      signal: controller.signal,
     });
-  } catch {
-    throw new ApiError("Cannot reach API. Check your connection.");
+  } catch (error) {
+    throw new ApiError(
+      (error as Error)?.name === "AbortError"
+        ? "The API did not answer in time. Check your connection."
+        : "Cannot reach API. Check your connection.",
+    );
+  } finally {
+    clearTimeout(timeout);
   }
 
   // receiveNotification answers 204 when there is nothing in the queue
@@ -76,7 +104,11 @@ export async function apiRequest<T>(
       expireSession();
     }
 
-    throw new ApiError(message, response.status);
+    throw new ApiError(
+      message,
+      response.status,
+      parseRetryAfter(response.headers.get("Retry-After")),
+    );
   }
 
   return response.json() as Promise<T>;
