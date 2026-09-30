@@ -10,6 +10,7 @@ export interface WebhookBody {
   idMessage: string;
   senderData: SenderData;
   messageData: MessageData;
+  stateInstance?: string;
 }
 
 export interface InstanceData {

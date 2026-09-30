@@ -8,6 +8,7 @@ interface INotificationOverrides {
   text?: string;
   idMessage?: string;
   timestamp?: number;
+  stateInstance?: string;
 }
 
 /** A webhook delivery shaped like the one `receiveNotification` hands back. */
@@ -19,11 +20,13 @@ export function createNotification({
   text = "hi from the recipient",
   idMessage = "msg-1",
   timestamp = 1712345678,
+  stateInstance,
 }: INotificationOverrides = {}): INotificationResponse {
   return {
     receiptId,
     body: {
       typeWebhook,
+      ...(stateInstance ? { stateInstance } : {}),
       instanceData: {
         idInstance: 1101000001,
         wid: "1101000001@c.us",

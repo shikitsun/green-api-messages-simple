@@ -136,7 +136,110 @@ describe("useMessagesListener", () => {
 
     expect(receiveNotifications).toHaveBeenCalledTimes(1);
 
-    await wait(Math.ceil(POLL_INTERVAL * Math.E));
+    await wait(POLL_INTERVAL);
+
+    expect(receiveNotifications).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops growing the pause at a minute", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.mocked(receiveNotifications).mockRejectedValue(
+      new Error("network down"),
+    );
+
+    setup();
+    await flush();
+
+    for (const pause of [20_000, 40_000, 60_000]) {
+      await wait(pause);
+    }
+
+    expect(receiveNotifications).toHaveBeenCalledTimes(4);
+
+    await wait(59_000);
+    expect(receiveNotifications).toHaveBeenCalledTimes(4);
+
+    await wait(1_000);
+    expect(receiveNotifications).toHaveBeenCalledTimes(5);
+  });
+
+  it("waits as long as the API asks when it is throttled", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.mocked(receiveNotifications)
+      .mockRejectedValueOnce(new ApiError("Too Many Requests", 429, 45))
+      .mockResolvedValue(undefined);
+
+    setup();
+    await flush();
+
+    await wait(POLL_INTERVAL * 2);
+
+    expect(receiveNotifications).toHaveBeenCalledTimes(1);
+
+    await wait(45_000 - POLL_INTERVAL * 2);
+
+    expect(receiveNotifications).toHaveBeenCalledTimes(2);
+  });
+
+  it("does wait longer than minute if the API asks for more", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.mocked(receiveNotifications)
+      .mockRejectedValueOnce(new ApiError("Too Many Requests", 429, 600))
+      .mockResolvedValue(undefined);
+
+    setup();
+    await flush();
+
+    await wait(50000);
+    expect(receiveNotifications).toHaveBeenCalledTimes(1);
+
+    await wait(550000);
+    expect(receiveNotifications).toHaveBeenCalledTimes(2);
+  });
+
+  it("stands down for an hour when the instance is no longer authorized", async () => {
+    vi.mocked(receiveNotifications).mockResolvedValueOnce(
+      createNotification({
+        receiptId: 7,
+        typeWebhook: "stateInstanceChanged",
+        stateInstance: "blocked",
+      }),
+    );
+
+    setup();
+    await flush();
+
+    expect(deleteNotification).toHaveBeenCalledWith(7);
+    expect(useToasts.getState().toasts.map((toast) => toast.text)).toEqual([
+      expect.stringMatching(/blocked/),
+    ]);
+    expect(useChatStore.getState().messagesByChat).toEqual({});
+
+    await wait(59 * 60 * 1000);
+    expect(receiveNotifications).toHaveBeenCalledTimes(1);
+
+    vi.mocked(receiveNotifications).mockResolvedValue(undefined);
+    await wait(60 * 1000);
+
+    expect(receiveNotifications).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps polling when the instance reports itself authorized", async () => {
+    vi.mocked(receiveNotifications).mockResolvedValueOnce(
+      createNotification({
+        receiptId: 8,
+        typeWebhook: "stateInstanceChanged",
+        stateInstance: "authorized",
+      }),
+    );
+
+    setup();
+    await flush();
+
+    expect(deleteNotification).toHaveBeenCalledWith(8);
+    expect(useToasts.getState().toasts).toEqual([]);
+
+    await wait(POLL_INTERVAL);
 
     expect(receiveNotifications).toHaveBeenCalledTimes(2);
   });
