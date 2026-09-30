@@ -3,7 +3,7 @@
   padding: calc(var(--spacing-1) * 2) calc(var(--spacing-1) * 4);
   border-radius: var(--rounded-sm);
 
-  width: min-content;
+  width: fit-content;
   max-width: 50vw;
   background-color: var(--background-tertiary);
 
@@ -16,5 +16,9 @@
   & time {
     align-self: flex-end;
     translate: 8px;
+  }
+
+  @media screen and (max-width: 48rem) {
+    max-width: 85%;
   }
 }
