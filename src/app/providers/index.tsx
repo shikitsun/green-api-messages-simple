@@ -9,13 +9,15 @@ interface IAppProvidersProps {
   children: React.ReactNode;
 }
 
+const basename = import.meta.env.BASE_URL;
+
 export const AppProviders = ({ children }: IAppProvidersProps) => {
   useSessionTeardown();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
-        <BrowserRouter>
+        <BrowserRouter basename={basename}>
           {children}
           <Toaster />
         </BrowserRouter>
