@@ -159,6 +159,10 @@ body {
 
     &.button--ghost {
       --button-background-color: transparent;
+      --button-text-color: light-dark(
+        var(--text-primary),
+        var(--text-primary-inverse-static)
+      );
       --button-background-color-hovered: var(--states-button-ghost-hover);
       --button-background-color-pressed: var(--states-button-ghost-pressed);
       --button-background-color-disabled: var(--states-button);
