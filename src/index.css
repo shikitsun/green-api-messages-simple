@@ -46,7 +46,6 @@
   /* radius */
   --rounded-sm: 1rem;
   --rounded-l: 1rem;
-  --rounded-xl: 1.25rem;
   --rounded-sxl: 1.75rem;
   --rounded-xl: 2rem;
 
@@ -263,5 +262,19 @@ body {
   .h-4,
   .size-4 {
     height: calc(var(--spacing-1) * 4);
+  }
+}
+
+@media screen and (max-width: 48rem) {
+  @layer base {
+    input {
+      font-size: 1rem;
+    }
+  }
+
+  @layer components {
+    .button.button--xsmall {
+      --button-border-radius: calc(var(--spacing-1) * 5.5);
+    }
   }
 }
