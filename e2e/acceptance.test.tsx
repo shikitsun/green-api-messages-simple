@@ -61,6 +61,16 @@ const bubbles = () =>
     outgoing: node.hasAttribute("data-is-outgoing"),
   }));
 
+const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const incoming = () =>
+  bubbles().some(
+    (bubble) => !bubble.outgoing && /Random message from/.test(bubble.text),
+  );
+
 describe("acceptance run", () => {
   beforeEach(() => window.history.replaceState({}, "", "/"));
   beforeAll(() => import("@/widgets/chat-window/ChatWindow"));
@@ -104,20 +114,26 @@ describe("acceptance run", () => {
     await waitFor(() => expect(chatRows()).toHaveLength(3));
     await injectIncomingMessages(3);
 
-    // the chat that received the delivery has the newest message, so it leads the list -
-    // the open chat is picked once, and waiting happens without touching the DOM: firing
-    // events inside waitFor deadlocks the browser run
-    fireEvent.click(openChatList()[0]);
+    // A delivery lands in one of four chats and reaches the app on the next poll, so the
+    // chats are walked until it shows up. The walking happens between waits rather than
+    // inside waitFor: firing events in its callback deadlocks the browser run.
+    const deadline = Date.now() + 60_000;
+    let replied = false;
 
-    await waitFor(
-      () =>
-        expect(
-          bubbles().some(
-            (bubble) =>
-              !bubble.outgoing && /Random message from/.test(bubble.text),
-          ),
-        ).toBe(true),
-      { timeout: 60_000, interval: 1_000 },
-    );
+    while (!replied && Date.now() < deadline) {
+      const rowsNow = openChatList();
+      for (const row of rowsNow.values()) {
+        fireEvent.click(row);
+        replied = incoming();
+
+        if (replied) {
+          break;
+        }
+      }
+
+      if (!replied) await sleep(1_000);
+    }
+
+    expect(replied).toBe(true);
   });
 });
