@@ -25,5 +25,17 @@ export default defineConfig({
     env: {
       VITE_GREEN_API_BASE: "https://api.green-api.test",
     },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.{ts,tsx}", "src/test/**", "src/mocks/**"],
+      thresholds: {
+        statements: 85,
+        branches: 80,
+        functions: 80,
+        lines: 85,
+      },
+    },
   },
 });
