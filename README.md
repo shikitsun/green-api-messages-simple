@@ -33,14 +33,15 @@ see [Mock mode](#mock-mode).
 
 ### Scripts
 
-| Command           | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| `npm run dev`     | dev server (starts the MSW mocks)                      |
-| `npm run build`   | `tsc -b && vite build` — production build + type check |
-| `npm run preview` | serve the production build locally                     |
-| `npm run lint`    | Oxlint                                                 |
-| `npm run test`    | Vitest, single run                                     |
-| `npx vitest`      | Vitest in watch mode                                   |
+| Command            | Description                                                          |
+| ------------------ | -------------------------------------------------------------------- |
+| `npm run dev`      | dev server (starts the MSW mocks)                                    |
+| `npm run build`    | `tsc -b && vite build` — production build + type check               |
+| `npm run preview`  | serve the production build locally                                   |
+| `npm run lint`     | Oxlint                                                               |
+| `npm run test`     | Vitest, single run                                                   |
+| `npm run coverage` | Vitest with coverage; fails under the thresholds in `vite.config.ts` |
+| `npx vitest`       | Vitest in watch mode                                                 |
 
 ## How it works
 
@@ -57,7 +58,9 @@ see [Mock mode](#mock-mode).
 4. **Receiving.** `useMessagesListener` polls `receiveNotification` every 10 s and immediately acknowledges
    every delivery through `deleteNotification` — an unacknowledged notification is served again and again.
    Incoming messages are deduplicated by `idMessage`; anything that is not a text message is acknowledged and
-   dropped, and each conversation is kept sorted by timestamp.
+   dropped, and each conversation is kept sorted by timestamp. A thread opens at its latest message and follows
+   new ones while the reader stays at the bottom — scrolling up to read history stops the view from being pulled
+   down.
 5. **Replies** appear in the open chat without a page reload.
 
 ## Mock mode
@@ -114,8 +117,9 @@ Design decisions:
   they are present, extracts the error message and returns `undefined` on `204` (empty notification queue).
 - **Sending** goes through form actions: the optimistic message is rendered right away and rolled back on
   failure, with the reason shown next to the composer.
-- **Receiving** is a polling hook with backoff: the interval grows on failure (`10s × (1 + Math.E)` per failed
-  attempt) and resets after a successful poll.
+- **Receiving** is a polling hook with backoff: a failed poll doubles the wait (20 s, 40 s, then 60 s at most)
+  and a successful one resets it to 10 s. If the API sends a `Retry-After`, that pause is used instead — the
+  server's own answer wins over the client's guess.
 - Messages are deduplicated by `idMessage` and sorted by `timestamp`, so a delivery is never rendered twice.
 
 ## Error handling
@@ -136,7 +140,12 @@ poll, an exception inside a form action.
   cause produces one message.
 - **Drafts live in the store**, not in the input element: a session ending, a failed send or a chat switch does not
   throw away text the user was typing. It is cleared once the message is actually on its way.
-- **Polling** reports a lost connection once per outage and re-arms it after the instance answers again.
+- **Polling** reports a lost connection once per outage and re-arms it after the instance answers again. A
+  `stateInstanceChanged` delivery that is not `authorized` stops the loop for an hour and says which state the
+  instance is in — an unauthorized instance answers nothing, so asking it every ten seconds only burns the
+  request budget.
+- **A request that never comes back** is aborted after 20 s (`AbortController` in `apiRequest`) — without it a
+  single hung request would freeze the poll loop, since the next attempt is only scheduled once this one settles.
 - **Form actions and any other unawaited promise**: `registerUnhandledRejectionReporter` (called in `main.tsx`)
   shows a safe text to the user and keeps the real reason in the console.
 - **Render errors** are caught by `app/ErrorBoundary.tsx`, which swaps the crashed subtree for a readable screen
@@ -149,6 +158,7 @@ In tests the same idea works the other way round — see the quiet rule below: a
 
 ```bash
 npm run test          # single run
+npm run coverage      # the same, plus the coverage report and the thresholds
 npx vitest            # watch
 ```
 
@@ -157,11 +167,11 @@ npx vitest            # watch
 - Credentials are kept in memory on purpose: instance tokens in `localStorage`/`sessionStorage` are readable by any
   script running on the page. A reload therefore returns to `/login`; a token refused by the API ends the session
   automatically, and there is no manual sign-out.
-- Delivery uses the HTTP API (`receiveNotification` → `deleteNotification`) with a fixed 10 s interval between
+- Delivery uses the HTTP API (`receiveNotification` → `deleteNotification`) with a 10 s interval between idle
   polls; a shorter idle interval would cut the latency (the API also documents a webhook endpoint).
 - Green API does not expose message history: conversations live for the duration of the browser session.
 - Non-text messages (`imageMessage`, …) are acknowledged and ignored: the app is text-only.
-- No virtualisation of the message list (noted in the code) and no auto-scroll to the latest message.
+- No virtualisation of the message list (noted in the code) — a very long thread renders in full.
 
 ## AI full disclosure
 
