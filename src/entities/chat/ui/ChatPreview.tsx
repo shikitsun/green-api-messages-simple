@@ -20,7 +20,7 @@ export function ChatPreview({
   return (
     <button
       className={styles.container}
-      aria-selected={isActive}
+      aria-current={isActive}
       onClick={() => onSelect?.(chatId)}
     >
       <ChatAvatar name={name} />

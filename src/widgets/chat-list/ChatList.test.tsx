@@ -30,7 +30,7 @@ const SERVER_CHATS: IChat[] = [
 ];
 
 function sidebarNames(container: HTMLElement) {
-  return [...container.querySelectorAll("button[aria-selected]")].map(
+  return [...container.querySelectorAll("button[aria-current]")].map(
     (preview) => preview.querySelector("span[title]")?.textContent,
   );
 }
@@ -95,7 +95,7 @@ describe("ChatList", () => {
     fireEvent.click(screen.getByText("User2"));
 
     expect(
-      container.querySelector('button[aria-selected="true"] span[title]')
+      container.querySelector('button[aria-current="true"] span[title]')
         ?.textContent,
     ).toBe("User2");
   });

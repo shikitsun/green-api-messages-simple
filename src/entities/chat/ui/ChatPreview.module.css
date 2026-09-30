@@ -40,7 +40,7 @@
     background-color: var(--states-background-card-pressed);
   }
 
-  &[aria-selected="true"] {
+  &[aria-current="true"] {
     background-color: var(--states-background-card-selected);
   }
 }
