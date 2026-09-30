@@ -162,3 +162,7 @@ npx vitest            # watch
 - Green API does not expose message history: conversations live for the duration of the browser session.
 - Non-text messages (`imageMessage`, …) are acknowledged and ignored: the app is text-only.
 - No virtualisation of the message list (noted in the code) and no auto-scroll to the latest message.
+
+## AI full disclosure
+
+> This software is developed with assistance from AI coding agents, mostly from open weights: gemma 4 26B A4B and deepseek V4.1 Flash. With human leading the ideas, testing, and debugging, all code in the end are reviewed before commiting. Earlier artifacts (in first commits) could be missed as well. Created tests, toasts, updated some stores and utilities and changed that README as well with them
