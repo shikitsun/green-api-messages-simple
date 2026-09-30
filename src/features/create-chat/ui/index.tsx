@@ -1,5 +1,5 @@
 import { useActionState, useLayoutEffect, useRef } from "react";
-import styles from "./CreateChatModel.module.css";
+import styles from "./CreateChatModal.module.css";
 import { useChats, useLocalChatsStore } from "@/entities/chat";
 import { createChat } from "../api";
 
