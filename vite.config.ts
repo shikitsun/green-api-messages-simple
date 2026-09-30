@@ -1,5 +1,6 @@
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import babel from "@rolldown/plugin-babel";
+import { Features } from "lightningcss";
 import { defineConfig } from "vitest/config";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -13,6 +14,9 @@ export default defineConfig({
   ],
   css: {
     transformer: "postcss",
+    lightningcss: {
+      exclude: Features.LightDark,
+    },
   },
   test: {
     environment: "jsdom",
